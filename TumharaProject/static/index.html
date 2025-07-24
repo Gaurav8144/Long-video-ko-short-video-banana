@@ -1,1 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Splitter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f1f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .upload-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        .upload-box h2 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #444;
+        }
+        input[type="file"],
+        input[type="time"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        button {
+            width: 100%;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin-top: 15px;
+            color: green;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
 
+    <div class="upload-box">
+        <h2>Video Splitter</h2>
+        <form id="upload-form">
+            <div class="form-group">
+                <label for="video">Upload Video:</label>
+                <input type="file" id="video" name="file" accept="video/*" required>
+            </div>
+
+            <div class="form-group">
+                <label for="timer">Split Time (hh:mm):</label>
+                <input type="time" id="timer" name="timer" step="60" required>
+            </div>
+
+            <button type="submit">Upload & Split</button>
+            <div class="message" id="message"></div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById("upload-form");
+        const message = document.getElementById("message");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            message.textContent = "Uploading...";
+
+            const videoFile = document.getElementById("video").files[0];
+            const timeValue = document.getElementById("timer").value;
+            const [hours, minutes] = timeValue.split(":").map(Number);
+            const totalMinutes = (hours * 60) + minutes;
+
+            const formData = new FormData();
+            formData.append("file", videoFile);
+            formData.append("timer", totalMinutes);
+
+            const response = await fetch("/upload/", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+            message.textContent = result.message || "Done!";
+        });
+    </script>
+
+</body>
+  </html>
