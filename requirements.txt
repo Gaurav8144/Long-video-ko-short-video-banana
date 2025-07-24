@@ -1,1 +1,4 @@
-jaja
+fastapi
+uvicorn
+moviepy
+python-multipart
